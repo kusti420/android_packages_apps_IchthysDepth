@@ -1,0 +1,50 @@
+// IchthysOS: IchthysDepth, the lock screen's depth cut-out (kusti420/ichthysos-tracker#58). Finds
+// the subject of the lock wallpaper on the phone (U²-Netp salient object model, Apache-2.0, run by
+// TFLite from external/tensorflow) and serves it as a mask to SystemUI, which draws the subject over
+// the clock. The model runs here and not in SystemUI, so a native crash in it can't take the lock
+// screen down. See README.md.
+//
+// Platform-signed priv-app: READ_WALLPAPER_INTERNAL (signature|privileged) to read the wallpaper,
+// INTERACT_ACROSS_USERS_FULL for other users' wallpapers; hidden WallpaperManager APIs via
+// platform_apis.
+
+package {
+    default_applicable_licenses: ["Android-Apache-2.0"],
+}
+
+android_app {
+    name: "IchthysDepth",
+    srcs: ["src/**/*.kt"],
+    resource_dirs: ["res"],
+    asset_dirs: ["assets"],
+    // The model is memory-mapped straight out of the APK.
+    aaptflags: [
+        "-0",
+        ".tflite",
+    ],
+    platform_apis: true,
+    certificate: "platform",
+    privileged: true,
+    system_ext_specific: true,
+    static_libs: [
+        "tensorflowlite_java",
+        "kotlinx_coroutines",
+    ],
+    jni_libs: ["libtensorflowlite_jni"],
+    use_embedded_native_libs: true,
+    // TFLite's Java side is called back from JNI by name.
+    optimize: {
+        enabled: false,
+    },
+    required: ["privapp-permissions-org.ichthys.depth"],
+}
+
+prebuilt_etc {
+    name: "privapp-permissions-org.ichthys.depth",
+    src: "privapp-permissions-org.ichthys.depth.xml",
+    // Without an explicit filename prebuilt_etc installs it under the module name, with no .xml
+    // extension, and SystemConfig skips it: enforce mode then crash-loops system_server.
+    filename: "privapp-permissions-org.ichthys.depth.xml",
+    sub_dir: "permissions",
+    system_ext_specific: true,
+}
