@@ -36,7 +36,10 @@ android_app {
     optimize: {
         enabled: false,
     },
-    required: ["privapp-permissions-org.ichthys.depth"],
+    required: [
+        "privapp-permissions-org.ichthys.depth",
+        "BigShouldersDisplay-VF.ttf",
+    ],
 }
 
 prebuilt_etc {
@@ -47,4 +50,11 @@ prebuilt_etc {
     filename: "privapp-permissions-org.ichthys.depth.xml",
     sub_dir: "permissions",
     system_ext_specific: true,
+}
+
+// Big Shoulders Display (SIL OFL 1.1, fonts/OFL.txt), the Depth face's digits
+// (SettingsLib DepthClockView reads it from /system/fonts by path).
+prebuilt_font {
+    name: "BigShouldersDisplay-VF.ttf",
+    src: "fonts/BigShouldersDisplay-VF.ttf",
 }
