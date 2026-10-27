@@ -42,5 +42,15 @@
             android:singleUser="true"
             android:readPermission="android.permission.READ_WALLPAPER_INTERNAL"
             android:writePermission="android.permission.READ_WALLPAPER_INTERNAL" />
+
+        <!-- IchthysOS lock screen editor v2: the subject of a photo that is not the wallpaper yet
+             (the editor's Ideas). Called with call(), which checks READ_WALLPAPER_INTERNAL itself. -->
+        <provider
+            android:name=".SegmentProvider"
+            android:authorities="org.ichthys.depth.segment"
+            android:exported="true"
+            android:singleUser="true"
+            android:readPermission="android.permission.READ_WALLPAPER_INTERNAL"
+            android:writePermission="android.permission.READ_WALLPAPER_INTERNAL" />
     </application>
 </manifest>

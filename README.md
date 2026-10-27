@@ -10,6 +10,10 @@ wallpaper's subject over the clock; this app finds the subject.
 - `Segmenter` runs U²-Netp (salient object detection) on TFLite at 320x320, scales the result to
   the picture (at most 1440 px) and sharpens its edge.
 - Masks are kept in device-protected storage, so the lock screen has them before the first unlock.
+- Living Sky: `content://org.ichthys.depth/sky/<userId>/<key>` is the wallpaper's sky, made the same
+  way (notified on `.../sky/<userId>`). `SkyFinder` needs no model: a sky score (sky colours, smooth,
+  high in the frame, not the subject), grown from the top edge, holes filled, then a colour guided
+  filter puts the edge on the picture's own. `SegmentProvider`'s `call("sky")` does it for any photo.
 
 ## Model
 
@@ -26,3 +30,5 @@ it matches the ONNX output to 1e-4. sha256 of the TFLite file:
     adb shell content read --uri content://org.ichthys.depth/mask/0/x   # starts a mask
     adb logcat -s IchthysDepth
     adb shell settings put secure ichthys_lockscreen_depth 1
+    adb shell content read --uri content://org.ichthys.depth/sky/0/x    # starts a sky mask
+    adb shell settings put secure ichthys_living_sky 1

@@ -34,7 +34,20 @@ object LockWallpaper {
             "S" + wm.getWallpaperIdForUser(WallpaperManager.FLAG_SYSTEM, userId)
 
     /** The picture itself, software, as stored (cropped); null for a live wallpaper. */
-    fun bitmap(wm: WallpaperManager, userId: Int): Bitmap? =
-        wm.getBitmapAsUser(userId, false, WallpaperManager.FLAG_LOCK, false)
+    fun bitmap(wm: WallpaperManager, userId: Int): Bitmap? {
+        // IchthysOS: a live wallpaper has no picture. getBitmapAsUser would return the built-in
+        // default instead, and a mask of that would be drawn over the live one.
+        if (isLive(wm, userId)) return null
+        return wm.getBitmapAsUser(userId, false, WallpaperManager.FLAG_LOCK, false)
             ?: wm.getBitmapAsUser(userId, false, WallpaperManager.FLAG_SYSTEM, true)
+    }
+
+    /** Whether the lock screen shows a live wallpaper (its own, else the home screen's). */
+    fun isLive(wm: WallpaperManager, userId: Int): Boolean {
+        val shown =
+            if (wm.getWallpaperIdForUser(WallpaperManager.FLAG_LOCK, userId) > 0)
+                WallpaperManager.FLAG_LOCK
+            else WallpaperManager.FLAG_SYSTEM
+        return wm.getWallpaperInfo(shown, userId) != null
+    }
 }
