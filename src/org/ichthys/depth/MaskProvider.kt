@@ -69,7 +69,12 @@ class MaskProvider : ContentProvider() {
         val current = LockWallpaper.key(wm, userId)
         val file = if (sky) skyFile(userId, current) else maskFile(userId, current)
         if (seg[2] == current && file.isFile) {
-            return ParcelFileDescriptor.open(file, ParcelFileDescriptor.MODE_READ_ONLY)
+            // IchthysOS: an empty file is a write that never finished (from before writes were
+            // all or nothing): made again instead of served for good.
+            if (file.length() > 0L) {
+                return ParcelFileDescriptor.open(file, ParcelFileDescriptor.MODE_READ_ONLY)
+            }
+            file.delete()
         }
         make(userId, current, sky)
         throw FileNotFoundException("${seg[0]} for $userId/${seg[2]} not ready")
@@ -109,15 +114,17 @@ class MaskProvider : ContentProvider() {
                         mask.recycle()
                         clearOthers(userId, key)
                         ctx.contentResolver.notifyChange(skyUri(userId), null)
-                    } catch (e: Exception) {
+                    } catch (e: Throwable) {
                         Log.e(TAG, "sky $id failed", e)
                         markFailed(userId, key, true)
                     }
                 }
                 subject?.recycle()
                 picture.recycle()
-            } catch (e: Exception) {
-                // A broken wallpaper must not loop: the next wallpaper change retries.
+            } catch (e: Throwable) {
+                // A broken wallpaper must not loop: the next wallpaper change retries. Throwable:
+                // an OutOfMemoryError or a JNI error would otherwise kill the worker without a
+                // marker, and SystemUI asks again (and crashes it again) on every lock.
                 Log.e(TAG, "mask $id failed", e)
                 markFailed(userId, key, sky)
             } finally {
@@ -138,17 +145,29 @@ class MaskProvider : ContentProvider() {
             clearOthers(userId, key)
             ctx.contentResolver.notifyChange(userUri(userId), null)
             mask
-        } catch (e: Exception) {
+        } catch (e: Throwable) {
             // A broken model must not loop: the next wallpaper change retries.
             Log.e(TAG, "mask $userId-$key failed", e)
             markFailed(userId, key, false)
             null
         }
 
+    /**
+     * [mask] as a PNG at [file], all or nothing: written to a temporary file, synced, then
+     * renamed. A half-written or empty PNG (power loss, a full disk) would be served for good
+     * and make SystemUI rebuild the lock screen's layers on every lock.
+     */
     private fun write(mask: Bitmap, file: File) {
         val tmp = File(file.parentFile, file.name + ".tmp")
-        FileOutputStream(tmp).use { mask.compress(Bitmap.CompressFormat.PNG, 100, it) }
-        tmp.renameTo(file)
+        val ok = FileOutputStream(tmp).use {
+            val written = mask.compress(Bitmap.CompressFormat.PNG, 100, it)
+            it.fd.sync()
+            written
+        }
+        if (!ok || !tmp.renameTo(file)) {
+            tmp.delete()
+            throw java.io.IOException("could not write ${file.name}")
+        }
     }
 
     /** The user's files of other wallpapers go (this one's subject, sky and markers stay). */
