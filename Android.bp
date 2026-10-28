@@ -39,6 +39,7 @@ android_app {
     required: [
         "privapp-permissions-org.ichthys.depth",
         "BigShouldersDisplay-VF.ttf",
+        "Nunito-VF.ttf",
     ],
 }
 
@@ -57,4 +58,11 @@ prebuilt_etc {
 prebuilt_font {
     name: "BigShouldersDisplay-VF.ttf",
     src: "fonts/BigShouldersDisplay-VF.ttf",
+}
+
+// Nunito (SIL OFL 1.1, fonts/OFL-Nunito.txt), the Depth face's rounded digits (FONT_ROUNDED, close
+// to SF Pro Rounded; SettingsLib DepthClockView reads it from /system/fonts by path).
+prebuilt_font {
+    name: "Nunito-VF.ttf",
+    src: "fonts/Nunito-VF.ttf",
 }
