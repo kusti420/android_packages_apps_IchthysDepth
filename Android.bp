@@ -40,6 +40,13 @@ android_app {
         "privapp-permissions-org.ichthys.depth",
         "BigShouldersDisplay-VF.ttf",
         "Nunito-VF.ttf",
+        "Rubik-VF.ttf",
+        "Teko-VF.ttf",
+        "SofiaSansCondensed-VF.ttf",
+        "Anton-Regular.ttf",
+        "Archivo-VF.ttf",
+        "InterTight-VF.ttf",
+        "ArchivoBlack-Regular.ttf",
     ],
 }
 
@@ -65,4 +72,46 @@ prebuilt_font {
 prebuilt_font {
     name: "Nunito-VF.ttf",
     src: "fonts/Nunito-VF.ttf",
+}
+
+// Rubik (SIL OFL 1.1, fonts/OFL-Rubik.txt), the Depth face's FONT_SOFT digits.
+prebuilt_font {
+    name: "Rubik-VF.ttf",
+    src: "fonts/Rubik-VF.ttf",
+}
+
+// Teko (SIL OFL 1.1, fonts/OFL-Teko.txt), the Depth face's FONT_TEKO digits.
+prebuilt_font {
+    name: "Teko-VF.ttf",
+    src: "fonts/Teko-VF.ttf",
+}
+
+// Sofia Sans Condensed (SIL OFL 1.1, fonts/OFL-SofiaSansCondensed.txt), the Depth face's FONT_CONDENSED digits.
+prebuilt_font {
+    name: "SofiaSansCondensed-VF.ttf",
+    src: "fonts/SofiaSansCondensed-VF.ttf",
+}
+
+// Anton (SIL OFL 1.1, fonts/OFL-Anton.txt), the Depth face's FONT_POSTER digits.
+prebuilt_font {
+    name: "Anton-Regular.ttf",
+    src: "fonts/Anton-Regular.ttf",
+}
+
+// Archivo (SIL OFL 1.1, fonts/OFL-Archivo.txt), the Depth face's FONT_COMPACT digits.
+prebuilt_font {
+    name: "Archivo-VF.ttf",
+    src: "fonts/Archivo-VF.ttf",
+}
+
+// Inter Tight (SIL OFL 1.1, fonts/OFL-InterTight.txt), the Depth face's FONT_GROTESK digits.
+prebuilt_font {
+    name: "InterTight-VF.ttf",
+    src: "fonts/InterTight-VF.ttf",
+}
+
+// Archivo Black (SIL OFL 1.1, fonts/OFL-ArchivoBlack.txt), the Depth face's FONT_HEAVY digits.
+prebuilt_font {
+    name: "ArchivoBlack-Regular.ttf",
+    src: "fonts/ArchivoBlack-Regular.ttf",
 }
